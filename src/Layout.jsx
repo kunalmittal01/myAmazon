@@ -10,6 +10,7 @@ import Moreprod from "./pages/moreprod";
 import Singlepd from "./pages/singlepd";
 import Cart from "./pages/cart";
 import Payment from "./pages/payment";
+import ForgotPass from "./pages/forgotPass";
 const Layout = ()=>{
     return (
         <>
@@ -40,6 +41,7 @@ const Layout = ()=>{
                 <Route path="/moreprod/cart/authentication" element={<Autentication />} />
                 <Route path="cart/authentication" element={<Autentication />} />
                 <Route path="/singlepd/:id/cart/authentication" element={<Autentication />} />
+                <Route path="/forgotpassword" element={<ForgotPass />} />
                 <Route path="payment" element={<Payment />} />
                 <Route path="/cart/payment" element={<Payment />} />
                 <Route path="/moreprod/cart/payment" element={<Payment />} />

@@ -675,6 +675,20 @@ footer{
   cursor: pointer
 }
 
+.forpass {
+  width: fit-content;
+  margin: 10px auto;
+  cursor: pointer;
+}
+
+.forpass a {
+  color: black;
+}
+
+.forpass:hover {
+  text-decoration: underline;
+}
+
 .amazon-logo {
   text-align: center;
 }
@@ -1213,4 +1227,58 @@ footer{
 
 .descbtn:hover {
   background-color: #ddb347; 
+}
+
+.passcont {
+  margin-top: 2rem;
+}
+
+.passhead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem
+} 
+
+.passhead p {
+  font-size: 20px;
+}
+
+.passhead span {
+  display: inline-block;
+  width: 30%;
+  height: 2px;
+  background-color: #747575;
+}
+
+.passcont form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 80%;
+  margin: 0 auto;
+  background-color: white;
+  padding: 1rem 2rem;
+  margin-top: 5rem;
+}
+
+.passcont form input {
+  border: 1px solid rgba(128, 128, 128, 0.452);
+  padding: 4px 5px;
+}
+
+.passcont form button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.passhomebtn {
+  width: fit-content;
+  margin: 2rem auto;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.passhomebtn:hover {
+  text-decoration: underline;
 }

@@ -151,6 +151,7 @@ const Autentication = () => {
         <p>password</p>
         <input value={userDetails.password} onChange={(e)=>getDetails(e,"password")} style={{marginTop: "10px"}} type="password" placeholder="******"/>
         <button disabled={disable} onClick={(e)=>onSignin(e)} type="submit">Continue</button>
+        <p className="forpass"><Link to="/forgotpassword">Forgot Password?</Link></p>
         <p>
           By continuing, you agree to Amazon’s
           <span> Conditions of Use </span>and<span> Privacy Policy.</span>
