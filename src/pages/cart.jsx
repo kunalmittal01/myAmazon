@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/navbar/navbar";
-import { removeFromCart, clearCart, updateWholeCart, removeFromCartFirestore } from "../slices/cartSlice";
+import { removeFromCart, clearCart, updateWholeCart, removeFromCartFirestore, clearAllProducts } from "../slices/cartSlice";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -96,7 +96,13 @@ const Cart = ()=>{
         )
     }
     const clearAllItemsCart = ()=>{
-        dispatch(clearCart());
+        if(!user) {
+            dispatch(clearCart());
+        }
+        else {
+            dispatch(clearAllProducts({uid:user.uid}));
+        }       
+        toast.success("Cleared All Products"); 
     }
     const toCheckout = async()=>{
         setLoading(true);
@@ -107,7 +113,8 @@ const Cart = ()=>{
         }
         setTimeout(()=>{
             navigate("payment");
-            dispatch(clearCart());
+            dispatch(clearCart()); 
+            dispatch(clearAllProducts({uid:user.uid}));
             setLoading(false);
         },2000)
         // const stripe = await stripePromise;

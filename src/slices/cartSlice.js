@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk  } from "@reduxjs/toolkit";
-import { addDoc, collection, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, setDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
 
 export const addToCartFirestore = createAsyncThunk(
@@ -28,6 +28,23 @@ export const addToCartFirestore = createAsyncThunk(
     }
   );
 
+  export const clearAllProducts = createAsyncThunk(
+    "cart/clearAllProducts",
+    async ({uid}) => {
+      try {
+      const ref = query(collection(db, `users/${uid}/cartItems`))
+      const snap = await getDocs(ref);
+      console.log(snap);
+      
+      const deleteAll = snap.docs.map(doc => deleteDoc(doc.ref))
+      await Promise.all(deleteAll)
+      }
+      catch (err) {
+        console.error("Error deleting Firestore:", err);
+        throw err;
+      }
+    }
+  )
 
 const cartSlice = createSlice({
     name: "cart",
@@ -90,6 +107,20 @@ const cartSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       });
+
+    builder.addCase(clearAllProducts.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    })  
+
+    builder.addCase(clearAllProducts.pending, (state) => {
+        state.status = "loading";
+    })
+    builder.addCase(clearAllProducts.fulfilled, (state) => {
+        state.items.length = 0;
+        state.total = 0;
+        state.status = "succeeded";
+    })
 }})
 
 export const { addToCart, removeFromCart, clearCart, updateWholeCart } = cartSlice.actions;
