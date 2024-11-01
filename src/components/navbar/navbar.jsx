@@ -39,6 +39,7 @@ const Navbar = ()=>{
     const [name, setName] = useState("");
     const [user] = useAuthState(auth);
     const [query, setQuery] = useState("");
+    const [suggest, setSuggest] = useState([]);
     const getUser = async()=>{
         if(user) {
             const res = await getDoc(doc(db, "users" ,user?.uid));
@@ -87,7 +88,28 @@ const Navbar = ()=>{
         }
         navigate(`/search?query=${query}`);
     }
-    
+
+    const fetchSuggestions = async()=>{
+        const res = await fetch('https://fakestoreapi.com/products');
+        const data = await res.json();
+        const res2 = await fetch('https://dummyjson.com/products');
+        const data2 = await res2.json();
+        const ar = [];
+        data.forEach(item=>{
+            ar.push({...item})
+        })
+        data2.products.forEach(item=>{
+            ar.push({...item, rating: {rate: item.rating}, image: item.images[0]})
+        })
+        setSuggest(ar);
+    }
+
+    useEffect(()=>{
+        fetchSuggestions();
+    }
+    ,[])
+
+
     return (
         <nav>
         <div className="nav1">
@@ -102,17 +124,33 @@ const Navbar = ()=>{
                 <a href="#"><span>India</span></a></span>
             </div>
             <div className="search">
-                <select name="choice" id="all">
-                    <option value="All">All</option>
-                    <option value="All Categories">All Categories</option>
-                    <option value="Amazon Devices">Amazon Devices</option>
-                </select>
-                <input onKeyUp={(e)=>{setQuery(e.target.value);
-                if(e.key=="Enter"){
-                    handleSearch();
-                }}} type="text" placeholder="Search Amazon" />
-                <span onClick={handleSearch}><i className="fa-sharp fa-solid fa-magnifying-glass"></i></span>
+                <div className="search-wrap">
+                    <select name="choice" id="all">
+                        <option value="All">All</option>
+                        <option value="All Categories">All Categories</option>
+                        <option value="Amazon Devices">Amazon Devices</option>
+                    </select>
+                    <input onKeyUp={(e)=>{setQuery(e.target.value);
+                    if(e.key=="Enter"){
+                        handleSearch();
+                    }}} type="text" vlaue={query} placeholder="Search Amazon" />
+                    <span onClick={handleSearch}><i className="fa-sharp fa-solid fa-magnifying-glass"></i></span>
+                </div>
+                <div className="suggest-list">
+                    {suggest.filter((item)=>{
+                        if(query == "") {
+                            return false;
+                        }
+                        return item.title.toLowerCase().includes(query.toLowerCase()) || item.category.toLowerCase().includes(query.toLowerCase());
+                    }).map((item,idx)=>{
+                        return <div key={idx} onClick={()=>handleSearch()} >
+                            <img src={item.image} alt="" />
+                            <p>{item.title}</p>
+                        </div>
+                    })}
+                </div>
             </div>
+                
             <div className="query">
                     <div className="signin">
                         {

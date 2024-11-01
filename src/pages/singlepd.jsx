@@ -10,6 +10,7 @@ import { auth } from "../firebase.config";
 const Singlepd = ()=>{
     const params = useParams();
     const [product, setProduct] = useState({});
+    const [load, setLoad] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // const [user] = useAuthState(auth)
@@ -47,6 +48,12 @@ const Singlepd = ()=>{
     };
     return (
         <>
+        {
+            load?
+            <div className="loading-anim">
+                <img src="https://cdn.dribbble.com/users/3742211/screenshots/9195657/media/6796a544d6f9ef1293d8d8d9e60d38d5.gif" alt="" />
+            </div>:
+            <>
             <Navbar />
             <div className="moredetails">
                 <div className="moredetailsimg">
@@ -73,6 +80,9 @@ const Singlepd = ()=>{
             </div>
             <Footer />
         </>
+        }
+        </>
+        
         
     )
 }

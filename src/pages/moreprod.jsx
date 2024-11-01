@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const Moreprod = ()=>{
     const [products,setProducts] = useState([]);
     const [query, setQuery] = useState("");
+    const [load,setLoad] = useState(false);
     const navigate= useNavigate();
     const request = new URLSearchParams(useLocation().search).get("q");
     const onSort = (e)=>{
@@ -53,6 +54,7 @@ const Moreprod = ()=>{
         })
     }
     const fetchProducts = async ()=>{
+        setLoad(true);
         const res = await fetch('https://dummyjson.com/products');
         const data = await res.json();
         console.log(data);
@@ -60,6 +62,7 @@ const Moreprod = ()=>{
             return {...data, rating: {rate: data.rating},image:data.images[0]}
         })
         setProducts(ar);
+        setLoad(false);
     }
     useState(()=>{
         fetchProducts();
@@ -78,6 +81,12 @@ const Moreprod = ()=>{
     }
  return (
     <>
+    {
+       load?
+       <div className="loading-anim">
+        <img src="https://cdn.dribbble.com/users/3742211/screenshots/9195657/media/6796a544d6f9ef1293d8d8d9e60d38d5.gif" alt="" />
+       </div>:
+        <>
     <Navbar />
     <div className="allprod">
     <div className="allprodleft">
@@ -90,7 +99,7 @@ const Moreprod = ()=>{
                     <p onClick={getQuery}>groceries</p>
                 </div>
                 <div className="price">
-                    <h3>All</h3>
+                    <h3>Price</h3>
                     <p onClick={getQuery}>Under $10</p>
                     <p onClick={getQuery}>$100-$500</p>
                     <p onClick={getQuery}>$500-$1,000</p>
@@ -121,6 +130,8 @@ const Moreprod = ()=>{
             
     </div>
     <Footer />
+    </>
+    }
     </>
  )
 }

@@ -6,14 +6,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 const Allproducts = ()=>{
     const [allProducts,setAllProducts] = useState([]);
     const navigate = useNavigate();
+    const [load, setLoad] = useState(false);
     const [query,setQuery] = useState("");
     const request = new URLSearchParams(useLocation().search).get("q");
     // console.log(request);
     
     const fetchAllProducts = async ()=>{
+        setLoad(true);
         const res = await fetch('https://fakestoreapi.com/products');
         const data = await res.json();
         setAllProducts(data);
+        setLoad(false);
     }
     useEffect(()=>{
         fetchAllProducts();
@@ -83,6 +86,12 @@ const Allproducts = ()=>{
     }
     return (
         <>
+        {
+            load? 
+            <div className="loading-anim">
+                <img src="https://cdn.dribbble.com/users/3742211/screenshots/9195657/media/6796a544d6f9ef1293d8d8d9e60d38d5.gif" alt="" />
+            </div>:
+            <>
         <Navbar />
         <div className="allprod">
             <div className="allprodleft">
@@ -95,7 +104,7 @@ const Allproducts = ()=>{
                     <p onClick={getQuery}>jewelery</p>
                 </div>
                 <div className="price">
-                    <h3>All</h3>
+                    <h3>Price</h3>
                     <p onClick={getQuery}>Under $10</p>
                     <p onClick={getQuery}>$100-$500</p>
                     <p onClick={getQuery}>$500-$1,000</p>
@@ -125,6 +134,9 @@ const Allproducts = ()=>{
             </div>
         </div>
         </>
+        }
+        </>
+        
     )
 }
 
