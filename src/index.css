@@ -248,7 +248,7 @@ i{
   }
 
 .services p {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
   .resvices, .shop, .servicecat {
