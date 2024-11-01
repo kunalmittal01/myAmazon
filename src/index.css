@@ -247,13 +247,13 @@ i{
     width: 100%;
   }
 
-.services p {
-  cursor: pointer !important;
-}
-
   .resvices, .shop, .servicecat {
     display: none;
   }
+}
+
+.services p {
+  cursor: pointer;
 }
 
 @media screen and (max-width: 650px){
