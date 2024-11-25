@@ -126,7 +126,7 @@ const Cart = ()=>{
         console.log(items.items);
         let checkoutSession;
         try {
-             checkoutSession = await axios.post(`${import.meta.env.VITE_HOST}/create-checkout-session`,
+             checkoutSession = await axios.post('https://myamazon-stripe-2.onrender.com/create-checkout-session',
             {
                     items:items.items,
                     total:items.total,
