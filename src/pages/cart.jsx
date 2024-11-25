@@ -8,7 +8,9 @@ import { auth, db } from "../firebase.config";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from '@stripe/stripe-js'
 import { collection, getDocs, query } from "firebase/firestore";
-
+// import dotenv from  'dotenv';
+import axios from 'axios';
+// dotenv.config({path: 'G:\Assignment\react.js\Amazon\Amazon-Clone\.env'})
 const Cart = ()=>{
     const items = useSelector(state=>state.cart)
     const navigate = useNavigate();
@@ -24,7 +26,9 @@ const Cart = ()=>{
        }
         toast.success("item removed form cart")
     }
-    // const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+    // console.log(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+    
+    const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
     
     const [prime,setPrime] = useState(Math.random()*10 < 5)
     const displayItems = ()=>[
@@ -111,34 +115,46 @@ const Cart = ()=>{
             setLoading(false);
             return;
         }
-        setTimeout(()=>{
-            navigate("payment");
-            dispatch(clearCart()); 
-            dispatch(clearAllProducts({uid:user.uid}));
-            setLoading(false);
-        },2000)
-        // const stripe = await stripePromise;
-        // const checkoutSession = await fetch('stripeEndPoint/create-checkout-session',{
-        //     method:"POST",
-        //     headers:{
-        //         "Content-Type":"application/json"
-        //     },
-        //     body:JSON.stringify({
-        //         items:items.items,
-        //         total:items.total,
-        //         email: user.email
-        //     })
-        // })
-        // console.log(checkoutSession);
+        // setTimeout(()=>{
+        //     navigate("payment");
+        //     dispatch(clearCart()); 
+        //     dispatch(clearAllProducts({uid:user.uid}));
+        //     setLoading(false);
+        // },2000)
+        const stripe = await stripePromise;
+        if (!stripe) throw new Error("Stripe instance not initialized");
+        console.log(items.items);
+        let checkoutSession;
+        try {
+             checkoutSession = await axios.post(`${import.meta.env.VITE_HOST}/create-checkout-session`,
+            {
+                    items:items.items,
+                    total:items.total,
+                    email: user.email
+            },
+            {
+                headers:{
+                    "Content-Type":"application/json"
+                },
+            })
+            console.log(checkoutSession);
+        }
+        catch (e) {
+            console.error(e);
+            toast.error(e.message);
+            return;
+        }
+        try {
+            const res = await stripe.redirectToCheckout({
+            sessionId: checkoutSession.data.id
+        })
+        }
         
-        // const res = await stripe.redirectToCheckout({
-        //     sessionId: checkoutSession.data.id
-        // })
-        // if(res.error) {
-        //     console.error("Error:",res.error.message);
-        //     toast.error("Error placing order");
-        //     return;
-        // }
+        catch(res) {
+            console.error("Error:",res.error.message);
+            toast.error("Error placing order");
+            return;
+        }
     }
     const fetchItemsFromDb = async()=>{
         const q = query(collection(db, `users/${user.uid}/cartItems`))
