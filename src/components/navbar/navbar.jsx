@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase.config";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateWholeCart } from "../../slices/cartSlice";
 const Navbar = ()=>{
     const sidebarRef = useRef(null);
     const[active, setActive] = useState(false);
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const items = useSelector(state=>state.cart.items);
 
@@ -104,11 +105,26 @@ const Navbar = ()=>{
         setSuggest(ar);
     }
 
+    const fetchItemsFromDb = async()=>{
+        const q = (collection(db, `users/${user.uid}/cartItems`))
+        const result = await getDocs(q);
+        // console.log(result.docs[0].data());
+        const ar = [];
+        result.forEach((doc) => {
+            ar.push({...doc.data()});
+        });
+        dispatch(updateWholeCart(ar));
+    }
+
     useEffect(()=>{
         fetchSuggestions();
-    }
-    ,[])
+    },[])
 
+    useEffect(()=>{
+        if(user && user.uid)
+        fetchItemsFromDb();
+    }
+    ,[user])
 
     return (
         <nav>
